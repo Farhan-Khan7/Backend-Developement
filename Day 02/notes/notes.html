@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node.js & Backend Basics — Day 86</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #f2efe4;
+    --paper-line: #e3ddc8;
+    --ink: #1f3a8a;
+    --ink-soft: #2b4aa8;
+    --red: #b23a3a;
+    --green: #2f6b4f;
+    --pencil: #3a3a3a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: #d8d3c2;
+    padding: 0 12px 40px;
+    font-family: 'Kalam', cursive;
+    color: var(--ink);
+  }
+
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 5px; width: 0%;
+    background: linear-gradient(90deg, var(--red), var(--ink));
+    z-index: 999; transition: width 0.08s linear;
+  }
+  #dotnav {
+    position: fixed; right: 14px; top: 50%; transform: translateY(-50%);
+    z-index: 900; display: flex; flex-direction: column; gap: 10px;
+  }
+  #dotnav button {
+    width: 11px; height: 11px; border-radius: 50%;
+    border: 2px solid var(--ink); background: transparent; cursor: pointer;
+    padding: 0; transition: transform 0.25s, background 0.25s;
+  }
+  #dotnav button.active { background: var(--red); border-color: var(--red); transform: scale(1.35); }
+  #dotnav button:hover { transform: scale(1.2); }
+  @media (max-width: 900px){ #dotnav{ display:none; } }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    background:
+      repeating-linear-gradient(to bottom, transparent, transparent 34px, var(--paper-line) 35px),
+      var(--paper);
+    border: 1px solid #c9c2a8;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    padding: 30px 34px 44px;
+    position: relative;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 6px;
+    opacity: 0;
+    animation: dropIn 0.6s ease forwards;
+  }
+  .name-tag {
+    position: absolute;
+    left: 0; top: 4px;
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    font-weight: 700;
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    padding: 4px 14px;
+    background: rgba(31,58,138,0.04);
+    transform: rotate(-2deg);
+  }
+  h1.title {
+    font-family: 'Caveat', cursive;
+    font-size: 46px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--ink);
+    margin: 4px 0;
+    letter-spacing: 1px;
+  }
+  @keyframes dropIn { from { opacity:0; transform: translateY(-14px);} to {opacity:1; transform: translateY(0);} }
+
+  .title-rule {
+    border: none; border-top: 3px solid var(--ink);
+    width: 0%; margin: 0 auto 10px;
+    animation: growLine 1s ease 0.3s forwards;
+  }
+  @keyframes growLine { to { width: 100%; } }
+
+  .hint-bar{
+    text-align:center; font-family:'Caveat', cursive; font-size: 16px;
+    color: var(--pencil); margin-bottom: 18px;
+    opacity: 0; animation: dropIn 0.6s ease 0.5s forwards;
+  }
+  .hint-bar span{ color: var(--red); font-weight:700; }
+
+  .grid3 {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr;
+    gap: 0 30px;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0 30px;
+  }
+  .col-divider { border-left: 1.5px solid var(--ink); padding-left: 28px; }
+
+  section.block, .diagram-block {
+    margin-bottom: 22px;
+    position: relative;
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  section.block.revealed, .diagram-block.revealed { opacity: 1; transform: translateY(0); }
+  section.block.pulse {
+    animation: pulseGlow 1.1s ease;
+  }
+  @keyframes pulseGlow {
+    0%   { box-shadow: 0 0 0 0 rgba(178,58,58,0.0); background: rgba(178,58,58,0.12); }
+    40%  { box-shadow: 0 0 0 8px rgba(178,58,58,0.12); background: rgba(178,58,58,0.12); }
+    100% { box-shadow: 0 0 0 0 rgba(178,58,58,0.0); background: transparent; }
+  }
+
+  h2.sec {
+    font-size: 19px; font-weight: 700; color: var(--ink);
+    text-decoration: underline; text-decoration-color: var(--ink-soft);
+    margin: 0 0 10px; display:flex; align-items:baseline; gap:8px;
+  }
+  h2.sec .num { color: var(--red); }
+  h3.subsec {
+    font-size: 15.5px; font-weight: 700; text-decoration: underline;
+    color: var(--ink); margin: 12px 0 6px;
+  }
+
+  ul.notes { list-style: none; margin: 0; padding: 0; }
+  ul.notes li {
+    position: relative; padding-left: 20px; margin-bottom: 6px;
+    font-size: 15.5px; line-height: 1.35; color: #26305c;
+    opacity: 0; transform: translateX(-8px); animation: liIn 0.4s ease forwards;
+  }
+  ul.notes li::before { content: "→"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+  ul.notes li.dot::before{ content: "•"; color: var(--ink); font-weight:700; }
+  @keyframes liIn { to { opacity: 1; transform: translateX(0); } }
+
+  code.inline {
+    font-family: 'Courier New', monospace;
+    background: rgba(31,58,138,0.08);
+    border: 1px solid rgba(31,58,138,0.25);
+    padding: 1px 6px; border-radius: 3px; font-size: 13.5px; color: var(--red);
+  }
+
+  .codebox {
+    position: relative; background: #10131c; color: #d7e3ff;
+    font-family: 'Courier New', monospace; font-size: 12.8px;
+    border-radius: 8px; padding: 11px 13px; margin: 8px 0;
+    box-shadow: 2px 3px 0 rgba(31,58,138,0.35); overflow-x: auto; line-height: 1.55;
+  }
+  .codebox .dots { margin-bottom: 6px; display:flex; align-items:center; justify-content: space-between; }
+  .dots-left span { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+  .dots .r{background:#ff5f56;} .dots .y{background:#ffbd2e;} .dots .g{background:#27c93f;}
+  .codebox .kw{color:#8ab4ff;} .codebox .fn{color:#e6c07b;} .codebox .str{color:#98d982;} .codebox .cm{color:#7d8aa8;}
+
+  .copy-btn {
+    font-family: 'Kalam', cursive; font-size: 10.5px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25);
+    color: #d7e3ff; border-radius: 5px; padding: 2px 8px; cursor: pointer; transition: background 0.2s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); color: #fff; }
+
+  .outputbox {
+    font-family: 'Courier New', monospace; font-size: 12.5px;
+    border: 1.5px solid var(--ink); border-radius: 5px;
+    padding: 4px 10px; display: inline-block; margin: 4px 0 10px;
+    background: rgba(47,107,79,0.06); color: var(--green);
+  }
+
+  .definition-box {
+    border: 2px solid var(--red); border-radius: 6px; padding: 9px 13px;
+    background: rgba(178,58,58,0.05); font-size: 14.5px; margin: 6px 0 12px;
+  }
+  .definition-box .label{ color: var(--red); font-weight:700; text-decoration: underline; display:block; margin-bottom:4px; }
+  .quote-line { font-style: normal; color: var(--ink-soft); font-size: 15px; margin: 4px 0 4px 8px; }
+
+  /* diagram boxes (node_modules style) */
+  .diagram-flow-v { display: flex; flex-direction: column; gap: 10px; }
+  .dbox-row { display:flex; align-items:center; gap: 10px; }
+  .dbox {
+    border: 2px solid var(--ink); border-radius: 6px;
+    padding: 7px 12px; font-family:'Courier New', monospace; font-size: 12.5px;
+    background: rgba(31,58,138,0.03); white-space: nowrap;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .dbox:hover { transform: translateY(-2px); box-shadow: 0 5px 10px rgba(31,58,138,0.18); }
+  .dbox.green { border-color: var(--green); background: rgba(47,107,79,0.05); }
+  .darrow-down { text-align:center; font-size: 20px; color: var(--red); animation: nudgeDown 1.5s ease-in-out infinite; }
+  @keyframes nudgeDown { 0%,100%{transform:translateY(0); opacity:.7;} 50%{transform:translateY(5px); opacity:1;} }
+  .dexplain { font-size: 13.5px; color: #26305c; line-height:1.3; }
+
+  .platform-list { display:flex; flex-wrap:wrap; gap:8px; margin: 8px 0 4px; }
+  .platform-chip {
+    border: 1.5px solid var(--ink); border-radius: 14px; padding: 3px 12px;
+    font-size: 13.5px; background: rgba(31,58,138,0.04);
+  }
+
+  .divider-full {
+    grid-column: 1 / -1; border: none; border-top: 2px solid var(--ink);
+    margin: 4px 0 24px; transform: scaleX(0); transform-origin: left; transition: transform 0.7s ease;
+  }
+  .divider-full.revealed { transform: scaleX(1); }
+
+  .pitfall-title, .interview-title, .optional-title {
+    font-weight: 700; font-size: 15.5px; text-decoration: underline;
+    margin: 12px 0 8px; color: var(--ink); display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .pitfall-title{ color: var(--red); }
+  .interview-title{ color: var(--green); }
+  .progress-chip {
+    font-family: 'Kalam', cursive; font-size: 11.5px; text-decoration: none;
+    background: rgba(31,58,138,0.08); border: 1px solid rgba(31,58,138,0.25);
+    padding: 2px 8px; border-radius: 10px; color: var(--ink);
+  }
+
+  ul.checklist { list-style:none; margin:0; padding:0; }
+  ul.checklist li {
+    display:flex; align-items:flex-start; gap: 8px;
+    font-size: 15px; line-height:1.35; color:#26305c; margin-bottom: 7px; cursor:pointer; user-select:none;
+  }
+  ul.checklist li .box {
+    flex: 0 0 16px; width:16px; height:16px; margin-top:2px;
+    border: 2px solid var(--ink); border-radius: 4px;
+    display:flex; align-items:center; justify-content:center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  ul.checklist li.done .box { background: var(--green); border-color: var(--green); }
+  ul.checklist li.done .box::after { content:"✓"; color:#fff; font-size:11px; font-weight:700; }
+  ul.checklist li.done .txt { text-decoration: line-through; color: #7a8199; }
+
+  /* analogy bubble */
+  .analogy-bubble {
+    position: relative;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 14px 16px;
+    background: #fdfcf6;
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    line-height: 1.3;
+    color: #26305c;
+    margin-top: 10px;
+    transition: transform 0.2s;
+  }
+  .analogy-bubble:hover { transform: translateY(-3px); }
+  .analogy-bubble::after {
+    content: "";
+    position: absolute;
+    left: 26px; bottom: -14px;
+    width: 0; height: 0;
+    border: 12px solid transparent;
+    border-top-color: var(--ink);
+    border-bottom: 0;
+  }
+  .analogy-bubble::before {
+    content: "";
+    position: absolute;
+    left: 28px; bottom: -10px;
+    width: 0; height: 0;
+    border: 10px solid transparent;
+    border-top-color: #fdfcf6;
+    border-bottom: 0;
+    z-index: 1;
+  }
+  .analogy-title {
+    font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+    text-decoration: underline; color: var(--red); margin-bottom: 4px;
+  }
+
+  .footer {
+    text-align:center; margin-top: 26px;
+    font-family: 'Caveat', cursive; font-size: 19px; letter-spacing: 4px; color: var(--pencil);
+  }
+  .footer .replay {
+    display:inline-block; margin-top: 10px; font-family:'Kalam', cursive; font-size: 13px;
+    letter-spacing: 1px; background: var(--ink); color: #f2efe4;
+    border:none; padding: 6px 16px; border-radius: 16px; cursor:pointer;
+  }
+  .footer .replay:hover{ background: var(--ink-soft); }
+
+  #confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1000; overflow:hidden; }
+  .confetti-piece { position:absolute; top:-10px; width:8px; height:14px; opacity:0.9; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(540deg); opacity: 0.3; } }
+
+  @media (max-width: 900px) {
+    .grid3, .grid2 { grid-template-columns: 1fr; }
+    .col-divider { border-left: none; padding-left: 0; }
+    .name-tag { position: static; display:inline-block; margin-bottom: 8px; transform: rotate(0); }
+    .header-row { flex-direction: column; }
+    h1.title { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<nav id="dotnav"></nav>
+<div id="confetti-layer"></div>
+
+<div class="page">
+
+  <div class="header-row">
+    <div class="name-tag">Farhan Khan</div>
+    <h1 class="title">Node.js &amp; Backend Basics — Day 86</h1>
+  </div>
+  <hr class="title-rule">
+  <div class="hint-bar">tap a <span>checkbox</span> to tick tasks/pitfalls, <span>hover code</span> to copy, use the <span>dots</span> on the right to jump around</div>
+
+  <div class="grid2">
+
+    <!-- LEFT: server basics -->
+    <section class="block" id="s1" data-dot="1. Server Basics">
+      <h2 class="sec"><span class="num">1.</span> PROGRAM SERVER TO RESPOND TO USERS</h2>
+      <h3 class="subsec">What is a Server?</h3>
+      <ul class="notes">
+        <li>Listens for requests from clients (browser, mobile app, Postman)</li>
+        <li>Processes the request</li>
+        <li>Sends back a response</li>
+        <li>In web dev, servers usually respond via <b>HTTP</b></li>
+      </ul>
+
+      <h3 class="subsec">Basic Express Server Code</h3>
+      <div class="codebox" data-code="const express = require('express');
+const app = express();
+
+// Route
+app.get('/', (req, res) => {
+    res.send('Hello User, Server is working!');
+});
+
+// Start server
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});">
+        <div class="dots">
+          <div class="dots-left"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <button class="copy-btn">copy</button>
+        </div>
+        <span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);<br>
+        <span class="kw">const</span> app = <span class="fn">express</span>();<br><br>
+        <span class="cm">// Route</span><br>
+        app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) =&gt; {<br>
+        &nbsp;&nbsp;res.<span class="fn">send</span>(<span class="str">'Hello User, Server is working!'</span>);<br>
+        });<br><br>
+        <span class="cm">// Start server</span><br>
+        app.<span class="fn">listen</span>(3000, () =&gt; {<br>
+        &nbsp;&nbsp;console.<span class="fn">log</span>(<span class="str">'Server running on port 3000'</span>);<br>
+        });
+      </div>
+      <div class="outputbox">✓ Server running on port 3000</div>
+
+      <h3 class="subsec">Explanation</h3>
+      <ul class="notes dot">
+        <li class="dot"><code class="inline">express()</code> → creates the server</li>
+        <li class="dot"><code class="inline">app.get()</code> → handles GET requests</li>
+        <li class="dot"><code class="inline">req</code> → request object (data from user)</li>
+        <li class="dot"><code class="inline">res</code> → response object (data sent back)</li>
+        <li class="dot"><code class="inline">listen()</code> → starts the server</li>
+      </ul>
+    </section>
+
+    <!-- RIGHT: pitfalls / interview / tasks for topic 1 -->
+    <section class="block col-divider" id="s2" data-dot="2. Server Q&A">
+      <div class="pitfall-title">⚠ COMMON PITFALLS <span class="progress-chip" id="p1-progress">0/4</span></div>
+      <ul class="checklist" id="p1-list">
+        <li><span class="box"></span><span class="txt">Forgetting to call app.listen()</span></li>
+        <li><span class="box"></span><span class="txt">Port already in use by another process</span></li>
+        <li><span class="box"></span><span class="txt">Missing res.send() → request hangs forever</span></li>
+        <li><span class="box"></span><span class="txt">Requiring express before installing it</span></li>
+      </ul>
+
+      <div class="interview-title">🎤 INTERVIEW QUESTIONS</div>
+      <ul class="notes dot">
+        <li class="dot">What is a server in Node.js?</li>
+        <li class="dot">What does <code class="inline">app.get()</code> do?</li>
+        <li class="dot">Difference between <code class="inline">req</code> and <code class="inline">res</code>?</li>
+        <li class="dot">What happens if you forget <code class="inline">app.listen()</code>?</li>
+      </ul>
+
+      <div class="optional-title">✏ OPTIONAL TASKS <span class="progress-chip" id="t1-progress">0/3</span></div>
+      <ul class="checklist" id="t1-list">
+        <li><span class="box"></span><span class="txt">Add a second route, e.g. /about</span></li>
+        <li><span class="box"></span><span class="txt">Return JSON instead of plain text</span></li>
+        <li><span class="box"></span><span class="txt">Create a simple POST route</span></li>
+      </ul>
+    </section>
+
+  </div>
+
+  <hr class="divider-full">
+
+  <div class="grid3">
+
+    <!-- deployment definition + platforms -->
+    <section class="block" id="s3" data-dot="3. Deployment">
+      <h2 class="sec"><span class="num">2.</span> DEPLOY SERVER</h2>
+      <h3 class="subsec">What is Deployment?</h3>
+      <div class="definition-box">
+        <span class="label">DEFINITION</span>
+        Making your server available on the internet — not just on localhost.
+      </div>
+
+      <h3 class="subsec">Common Platforms</h3>
+      <div class="platform-list">
+        <span class="platform-chip">Render</span>
+        <span class="platform-chip">Railway</span>
+        <span class="platform-chip">Vercel <i style="font-size:11px;">(mostly frontend)</i></span>
+        <span class="platform-chip">AWS / DigitalOcean <i style="font-size:11px;">(advanced)</i></span>
+      </div>
+    </section>
+
+    <!-- deployment steps diagram -->
+    <div class="diagram-block col-divider" id="s4" data-dot="4. Steps">
+      <h2 class="sec"><span class="num">3.</span> DEPLOYMENT STEPS</h2>
+      <div class="diagram-flow-v">
+        <div class="dbox-row"><div class="dbox">1. Push code to GitHub</div></div>
+        <div class="darrow-down">↓</div>
+        <div class="dbox-row"><div class="dbox">2. Connect repo to hosting service</div></div>
+        <div class="darrow-down">↓</div>
+        <div class="dbox-row"><div class="dbox">3. Add environment variables</div></div>
+        <div class="darrow-down">↓</div>
+        <div class="dbox-row"><div class="dbox green">4. Build &amp; start server</div></div>
+      </div>
+      <p class="dexplain" style="margin-top:10px;">Conceptual flow — exact steps vary a little per platform, but this order stays the same.</p>
+    </div>
+
+    <!-- analogy + pitfalls -->
+    <section class="block col-divider" id="s5" data-dot="5. Analogy">
+      <div class="pitfall-title">⚠ COMMON PITFALLS <span class="progress-chip" id="p2-progress">0/4</span></div>
+      <ul class="checklist" id="p2-list">
+        <li><span class="box"></span><span class="txt">Forgetting to add environment variables</span></li>
+        <li><span class="box"></span><span class="txt">Hardcoding port instead of process.env.PORT</span></li>
+        <li><span class="box"></span><span class="txt">Pushing node_modules to GitHub</span></li>
+        <li><span class="box"></span><span class="txt">Not testing locally before deploying</span></li>
+      </ul>
+
+      <div class="analogy-bubble">
+        <div class="analogy-title">ANALOGY</div>
+        Deployment is like moving your shop from your home garage (localhost) to a shop on Main Street (the internet) — now anyone can walk in, not just you.
+      </div>
+    </section>
+
+  </div>
+
+  <hr class="divider-full">
+
+  <div class="grid2">
+    <section class="block" id="s6" data-dot="6. Deploy Q&A">
+      <div class="interview-title">🎤 INTERVIEW QUESTIONS</div>
+      <ul class="notes dot">
+        <li class="dot">What is deployment?</li>
+        <li class="dot">Difference between localhost and a deployed server?</li>
+        <li class="dot">Why can't Vercel easily host most Node/Express backends?</li>
+        <li class="dot">What are environment variables, and why do we need them?</li>
+      </ul>
+    </section>
+
+    <section class="block col-divider" id="s7" data-dot="7. Deploy Tasks">
+      <div class="optional-title">✏ OPTIONAL TASKS <span class="progress-chip" id="t2-progress">0/3</span></div>
+      <ul class="checklist" id="t2-list">
+        <li><span class="box"></span><span class="txt">Deploy your Express server on Render or Railway</span></li>
+        <li><span class="box"></span><span class="txt">Add a .gitignore file to exclude node_modules</span></li>
+        <li><span class="box"></span><span class="txt">Use process.env.PORT instead of a hardcoded port</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="footer">
+    — end of day 86 —
+    <br>
+    <button class="replay" id="replay-btn">▸ replay animations</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const bar = document.getElementById('progress-bar');
+  function updateBar(){
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = (isFinite(scrolled) ? scrolled : 0) + '%';
+  }
+  document.addEventListener('scroll', updateBar);
+  updateBar();
+
+  const sections = Array.from(document.querySelectorAll('[data-dot]'));
+  const dotnav = document.getElementById('dotnav');
+  sections.forEach(sec => {
+    const btn = document.createElement('button');
+    btn.title = sec.dataset.dot;
+    btn.addEventListener('click', () => sec.scrollIntoView({behavior:'smooth', block:'center'}));
+    dotnav.appendChild(btn);
+  });
+  const dotButtons = Array.from(dotnav.children);
+
+  const revealables = document.querySelectorAll('section.block, .diagram-block, .divider-full');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        const items = entry.target.querySelectorAll('ul.notes li, ul.checklist li');
+        items.forEach((li, i) => { li.style.animationDelay = (i * 0.06) + 's'; });
+      }
+    });
+  }, { threshold: 0.15 });
+  revealables.forEach(el => observer.observe(el));
+
+  const secObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const idx = sections.indexOf(entry.target);
+      if (entry.isIntersecting && idx > -1) {
+        dotButtons.forEach(b => b.classList.remove('active'));
+        dotButtons[idx].classList.add('active');
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s => secObserver.observe(s));
+
+  document.querySelectorAll('.codebox').forEach(box => {
+    const btn = box.querySelector('.copy-btn');
+    if (!btn) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const code = box.dataset.code || box.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = 'copied ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1400);
+      }).catch(() => {
+        btn.textContent = 'error';
+        setTimeout(() => { btn.textContent = 'copy'; }, 1400);
+      });
+    });
+  });
+
+  function wireChecklist(listId, progressId) {
+    const list = document.getElementById(listId);
+    const progress = document.getElementById(progressId);
+    const items = Array.from(list.querySelectorAll('li'));
+    function refresh() {
+      const doneCount = items.filter(li => li.classList.contains('done')).length;
+      progress.textContent = doneCount + '/' + items.length;
+      if (doneCount === items.length) launchConfetti();
+    }
+    items.forEach(li => {
+      li.addEventListener('click', () => { li.classList.toggle('done'); refresh(); });
+    });
+    refresh();
+  }
+  wireChecklist('p1-list', 'p1-progress');
+  wireChecklist('t1-list', 't1-progress');
+  wireChecklist('p2-list', 'p2-progress');
+  wireChecklist('t2-list', 't2-progress');
+
+  const colors = ['#b23a3a', '#1f3a8a', '#2f6b4f', '#e6c07b'];
+  function launchConfetti() {
+    const layer = document.getElementById('confetti-layer');
+    for (let i = 0; i < 40; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.animationDuration = (1.6 + Math.random()*1.4) + 's';
+      piece.style.opacity = 0.7 + Math.random()*0.3;
+      layer.appendChild(piece);
+      setTimeout(() => piece.remove(), 3200);
+    }
+  }
+
+  document.getElementById('replay-btn').addEventListener('click', () => {
+    revealables.forEach(el => el.classList.remove('revealed'));
+    requestAnimationFrame(() => {
+      revealables.forEach(el => observer.observe(el));
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+})();
+</script>
+</body>
+</html>
