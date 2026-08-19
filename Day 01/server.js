@@ -1,10 +1,7 @@
-const http = require('http');
+const server = require('http');
 
 
-const server = http.createServer((req , res) => {
-    res.end("Haa Bhai Request Accept Ho gayi hai. ")
-})
+const app = server();
 
-server.listen(8000 , function() {
-    console.log("Server Started ")
-})
+
+app.listen()
