@@ -13,12 +13,16 @@ app.get('/' , (req , res) => {
 app.post('/notes' , (req , res) => {
     notes.push(req.body)
     console.log(notes)
-    res.send("Notes Created Successfully!")
+    res.status(201).json({
+        message : "Notes Created Successfully!"
+    })
 })
 
 
 app.get('/notes' , (req , res) => {
-    res.send(notes)
+    res.status(200).json({
+        notes : notes 
+    })
 })
 
 
@@ -26,7 +30,9 @@ app.delete('/notes/:index' , (req , res) => {
     const index = req.params.index
 
     delete notes[index]
-    res.send("Notes Delete Successfully!")
+    res.status(200).json({
+        message : "Notes Deleted Successfully!"
+    })
 })
 
 app.patch('/notes/:index' , (req ,res) => {
@@ -42,7 +48,9 @@ app.patch('/notes/:index' , (req ,res) => {
         notes[index].description = description;
     }
 
-    res.send("Notes Updated Successfully!")
+    res.status(200).json({
+        message : "Notes Updated Successfully!"
+    })
     
 })
 
