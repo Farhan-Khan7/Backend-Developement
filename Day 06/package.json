@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev" : "npx nodemone server.js"
+    "dev": "npx nodemone server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +15,6 @@
   "dependencies": {
     "express": "^5.2.1",
     "mongoose": "^9.9.3"
-  }
+  },
+  "devDependencies": {}
 }
