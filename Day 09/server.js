@@ -4,8 +4,11 @@ const connectToDB = require('./src/config/databaseConnect')
 
 
 
+
 // Database function call
 connectToDB();
+
+
 
 
 
