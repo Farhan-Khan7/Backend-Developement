@@ -42,6 +42,7 @@ authRouter.post("/register", async (req, res) => {
 });
 
 authRouter.get("/get-me", async (req, res) => {
+
   const token = req.cookies.token;
 
   const decode = jwt.verify(token, process.env.JWT_SECRET);
@@ -69,10 +70,7 @@ authRouter.post("/login", async (req, res) => {
     });
   }
 
-  const hashPassword = crypto
-    .createHash("sha256")
-    .update(password)
-    .digest("hex");
+  const hashPassword = crypto.createHash("sha256").update(password).digest("hex");
 
   console.log(hashPassword);
 
