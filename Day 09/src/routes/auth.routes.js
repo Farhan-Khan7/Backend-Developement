@@ -72,7 +72,6 @@ authRouter.post("/login", async (req, res) => {
 
   const hashPassword = crypto.createHash("sha256").update(password).digest("hex");
 
-  console.log(hashPassword);
 
   const isPassword = hashPassword === registeredUser.password;
 
