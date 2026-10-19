@@ -15,6 +15,13 @@ class ApiResponse {
         })
     }
 
+    static userExist(message = "true"){
+        return res.status(200).json({
+            success: true,
+            message,
+        })
+    }
+
     static noContent(res) {
         return res.status(204).send()
     }
