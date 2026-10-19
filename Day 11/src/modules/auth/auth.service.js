@@ -3,6 +3,7 @@ import ApiResponse from "../../common/utils/ApiResponse.js";
 import {
   generateAccessToken,
   generateRefreshToken,
+  generateResetToken,
   hashToken,
   verifyRefreshToken,
 } from "../../common/utils/jwt.utils.js";
@@ -31,6 +32,10 @@ const login = async ({ email, password }) => {
   if (!user.isVerified) {
     throw ApiError.forbidden("Please verify your email before login");
   }
+
+  const isMatch = await user.comparePassword(password);
+
+  if (!isMatch) throw ApiError.unauthorized("Invalid email or password");
 
   const accessToken = generateAccessToken({ userId: user._id });
   const refreshToken = generateRefreshToken({ userId: user._id });
@@ -79,4 +84,25 @@ const logout = async ({ userId }) => {
 
   await user.save({ validateBeforeSave: false });
 };
-export { register };
+
+const profile = async ({ userId }) => {
+  const user = await userModel.findById(userId);
+
+  if (!user) ApiError.notFound("User not found!");
+
+  return user;
+};
+
+const forgotPassword = async ({ email }) => {
+  const user = await userModel.findOne({ email });
+
+  if (!user) throw ApiError.notFound("User not found!");
+
+  const { rawToken, hashedToken } = generateResetToken();
+
+  user.resetPasswordToken = hashToken;
+  user.resetPasswordExpired = Date.now() + 15 * 60 * 1000;
+  await user.save();
+};
+
+export { register, login, refresh, logout, forgotPassword , profile };

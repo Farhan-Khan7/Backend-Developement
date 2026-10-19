@@ -15,6 +15,7 @@ class ApiResponse {
         })
     }
 
+    
     static userExist(message = "true"){
         return res.status(200).json({
             success: true,
