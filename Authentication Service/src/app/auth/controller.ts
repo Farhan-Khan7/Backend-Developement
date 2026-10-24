@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
 import crypto from "crypto"
-import { signupPayload } from "../models";
+import { signupPayload , loginPayload } from "../models";
 import { db } from "../../db";
 import { userTable } from "../../db/schema";
 import { eq } from "drizzle-orm";
+import { error } from "console";
 
 
 export class AuthenticationController {
@@ -42,6 +43,47 @@ export class AuthenticationController {
         message : "user has been created successfully!",
         date : {
             id : result[0]?.id
+        }
+    })
+
+  }
+
+  public async handleLogin(req: Request, res: Response) {
+    const validationResult = await loginPayload.safeParseAsync(req.body)
+
+    if(validationResult.error){
+        return res.status(400).json({
+            message : "body validation failed",
+            error : validationResult.error.issues
+        })
+    }
+
+    const {email , password} = validationResult.data
+
+    const [userExist] = await db.select().from(userTable).where(eq(userTable.email , email))
+
+    if(!userExist){
+        return res.status(404).json({
+            message : `user with email ${email} does not exist`
+        })
+    }
+
+    const salt = userExist.salt!
+    const hash = crypto.createHmac("sha256" , salt).update(password).digest("hex")
+
+    if(userExist.password !== hash) {
+        return res.status(400).json({
+            message : `email or password is incorrect`
+        })
+    }
+
+    // Token banao or return kardo 
+
+
+    return res.status(200).json({
+        message : `LogIn successfully `,
+        data : {
+            token : 1
         }
     })
 
