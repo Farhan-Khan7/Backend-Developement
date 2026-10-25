@@ -5,7 +5,6 @@ import { signupPayload, loginPayload } from "../models";
 import { db } from "../../db";
 import { userTable } from "../../db/schema";
 import { eq } from "drizzle-orm";
-import { error } from "console";
 import { createUserToken, userTokenPayload } from "./utils/token";
 
 

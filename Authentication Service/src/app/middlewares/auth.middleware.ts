@@ -42,6 +42,6 @@ export function restrictToAuthenticationUser() {
                 error : 'Authentication Required'
             })
         }
-        next()
-    }
+      next()
+    };
 }
