@@ -1,0 +1,17 @@
+
+services:
+  sql-learning-db:
+    image: postgres:17
+    container_name: sql-learning-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sql
+      POSTGRES_PASSWORD: sql
+      POSTGRES_DB: sql_practice
+    ports:
+      - "5433:5432"
+    volumes:
+      - sql_learning_data:/var/lib/postgresql/data
+
+volumes:
+  sql_learning_data:
