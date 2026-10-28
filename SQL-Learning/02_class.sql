@@ -6,7 +6,6 @@ CREATE TABLE ipl_players (
     runs_scored INT CHECK (runs_scored > 0),
     wickets_taken INT CHECK (wickets_taken > 0),
     auction_price_crores INT
-
 );
 
 ALTER TABLE ipl_players
