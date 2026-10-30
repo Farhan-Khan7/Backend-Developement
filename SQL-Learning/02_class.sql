@@ -8,5 +8,4 @@ CREATE TABLE ipl_players (
     auction_price_crores INT
 );
 
-ALTER TABLE ipl_players
-DELETE COLUMN player_nickname VARCHAR(50);
+DROP TABLE ipl_players;
