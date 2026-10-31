@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
+        "AIML",
+        "Aman",
         "Biryani",
         "chaicode",
         "Chola",
@@ -8,11 +10,32 @@
         "Dtoclass",
         "Farhan",
         "Madhya",
+        "masterji",
+        "MERN",
         "Momos",
         "Nagar",
+        "Noida",
         "Paneer",
         "postgresdb",
         "Pradesh",
+        "Rahul",
+        "Raza",
+        "Sharma",
+        "Sibtain",
+        "sqluser",
         "Tikka"
+    ],
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5433,
+            "driver": "PostgreSQL",
+            "name": "sql_connection",
+            "database": "sql_practice",
+            "username": "sql",
+            "password": "sql"
+        }
     ]
 }
