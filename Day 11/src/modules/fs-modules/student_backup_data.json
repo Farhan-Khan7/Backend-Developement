@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "name": "Farhan",
+        "age": 20,
+        "course": "MERN Stack",
+        "city": "Bhopal"
+    },
+    {
+        "id": 2,
+        "name": "Rahul Sharma",
+        "age": 22,
+        "course": "Full Stack Development",
+        "city": "Indore"
+    },
+    {
+        "id": 4,
+        "name": "Sara",
+        "age": 23,
+        "course": "MERN Stack",
+        "city": "Mumbai"
+    },
+    {
+        "id": 5,
+        "name": "Ali",
+        "age": 19,
+        "course": "Frontend Development",
+        "city": "Bhopal"
+    },
+    {
+        "id": 6,
+        "name": "Sibtain Raza",
+        "age": 19,
+        "course": "AIML Engineer",
+        "city": "Noida"
+    }
+]
