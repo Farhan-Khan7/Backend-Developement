@@ -55,6 +55,8 @@ VALUES
     (5, 5),
     (6, 4),
     (7, 1);
+
+    
 -- Notice:
 -- Student ID 8 (David) is not enrolled in any course.
 -- Course ID 5 is enrolled by John.
