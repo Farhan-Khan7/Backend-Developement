@@ -1,4 +1,3 @@
-
 import express from "express";
 import http from "node:http";
 import { Server } from "socket.io";
@@ -31,16 +30,14 @@ io.on("connection", (socket) => {
     socket.on("message", (data) => {
 
         // Sabhi connected clients ko message send
-        socket.broadcast.emit("new-message", data);
+        socket.emit("new-message", data);
         console.log("index.js : ",data)
 
     });
 
     // Client disconnect
     socket.on("disconnect", () => {
-
         console.log("Disconnected from server:", socket.id);
-
     });
 
 });
