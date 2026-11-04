@@ -21,6 +21,10 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
 
+app.get("/room", (req, res) => {
+    res.sendFile(path.join(__dirname, "room.html"));
+});
+
 // Socket connection
 io.on("connection", (socket) => {
 
@@ -28,12 +32,21 @@ io.on("connection", (socket) => {
 
     // Client se message receive
     socket.on("message", (data) => {
-
         // Sabhi connected clients ko message send
-        socket.emit("new-message", data);
+        socket.broadcast.emit("new-message", data);
         console.log("index.js : ",data)
-
     });
+
+
+    socket.on("joinRoom", (roomId) => {
+        socket.join(roomId);
+        console.log(`User ${socket.id} joined room: ${roomId}`);
+    });
+
+    socket.on("message", ({roomId , messageText}) => {
+        socket.to(roomId).emit("new-message" , messageText)
+        console.log("Room ID : ", roomId , "\n" , "Message : " , messageText)
+    })
 
     // Client disconnect
     socket.on("disconnect", () => {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Crimson Chat</title>
+    <title>Midnight Navy Chat</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,14 +33,14 @@
       }
 
       :root {
-        --bg: #080607;
-        --surface: #110b0d;
-        --surface-light: #1a1013;
-        --crimson: #e50935;
-        --crimson-light: #ff3155;
+        --bg: #050914;
+        --surface: #0a1222;
+        --surface-light: #101d33;
+        --crimson: #2563eb;
+        --crimson-light: #60a5fa;
         --text: #f5eeee;
         --muted: #82777b;
-        --border: rgba(255, 35, 75, 0.12);
+        --border: rgba(96, 165, 250, 0.16);
       }
 
       body {
@@ -63,7 +63,7 @@
         position: fixed;
         width: 550px;
         height: 550px;
-        background: rgba(229, 9, 53, 0.09);
+        background: rgba(37, 99, 235, 0.14);
         filter: blur(150px);
         border-radius: 50%;
         top: 20%;
@@ -80,7 +80,7 @@
         max-width: 1000px;
         height: 94vh;
         max-height: 850px;
-        background: rgba(17, 11, 13, 0.92);
+        background: rgba(8, 15, 29, 0.92);
         border: 1px solid var(--border);
         border-radius: 20px;
         display: flex;
@@ -88,7 +88,7 @@
         overflow: hidden;
         position: relative;
         box-shadow:
-          0 0 50px rgba(229, 9, 53, 0.06),
+          0 0 50px rgba(37, 99, 235, 0.08),
           0 20px 80px rgba(0, 0, 0, 0.6);
       }
 
@@ -102,7 +102,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: rgba(28, 15, 19, 0.85);
+        background: rgba(16, 29, 51, 0.88);
         border-bottom: 1px solid var(--border);
         backdrop-filter: blur(15px);
       }
@@ -117,7 +117,7 @@
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #7e0927, #ed1745);
+        background: linear-gradient(135deg, #1d4ed8, #38bdf8);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -125,7 +125,7 @@
         font-weight: 700;
         color: white;
         position: relative;
-        box-shadow: 0 0 20px rgba(229, 9, 53, 0.25);
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.30);
       }
 
       .online-dot {
@@ -134,8 +134,8 @@
         position: absolute;
         right: 0;
         bottom: 1px;
-        background: #35d48b;
-        border: 2px solid #110b0d;
+        background: #34d399;
+        border: 2px solid #0a1222;
         border-radius: 50%;
       }
 
@@ -151,7 +151,7 @@
       }
 
       .user-details p span {
-        color: #35d48b;
+        color: #34d399;
       }
 
       .header-actions {
@@ -161,7 +161,7 @@
 
       .header-actions i {
         font-size: 21px;
-        color: #b6a8ac;
+        color: #a9bad4;
         cursor: pointer;
         transition: 0.3s;
       }
@@ -194,7 +194,7 @@
       }
 
       .chat-body::-webkit-scrollbar-thumb {
-        background: #511020;
+        background: #1e3a65;
         border-radius: 10px;
       }
 
@@ -204,8 +204,8 @@
         align-self: center;
         padding: 6px 14px;
         font-size: 10px;
-        color: #c9aeb5;
-        background: #241116;
+        color: #a9c8f5;
+        background: #14223a;
         border: 1px solid var(--border);
         border-radius: 20px;
       }
@@ -226,11 +226,11 @@
       .empty-chat i {
         font-size: 40px;
         color: var(--crimson);
-        filter: drop-shadow(0 0 15px rgba(229, 9, 53, 0.5));
+        filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.5));
       }
 
       .empty-chat h3 {
-        color: #e8d9dd;
+        color: #e5efff;
         font-size: 16px;
       }
 
@@ -265,16 +265,16 @@
 
       .received {
         align-self: flex-start;
-        background: #21191c;
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: #14223a;
+        border: 1px solid rgba(96, 165, 250, 0.10);
         border-radius: 15px 15px 15px 3px;
       }
 
       .sent {
         align-self: flex-end;
-        background: linear-gradient(135deg, #8d102c, #c81038);
+        background: linear-gradient(135deg, #2563eb, #1746a2);
         border-radius: 15px 15px 3px 15px;
-        box-shadow: 0 5px 20px rgba(229, 9, 53, 0.13);
+        box-shadow: 0 5px 20px rgba(37, 99, 235, 0.18);
       }
 
       .message-meta {
@@ -288,7 +288,7 @@
       }
 
       .sent .message-meta i {
-        color: #ffb2c2;
+        color: #bfdbfe;
       }
 
       /* =========================
@@ -298,7 +298,7 @@
       .chat-footer {
         padding: 18px 22px;
         border-top: 1px solid var(--border);
-        background: rgba(20, 12, 15, 0.95);
+        background: rgba(8, 15, 29, 0.96);
       }
 
       .input-wrapper {
@@ -307,19 +307,19 @@
         gap: 13px;
         padding: 10px 14px;
         border-radius: 13px;
-        background: #211619;
-        border: 1px solid rgba(255, 35, 75, 0.12);
+        background: #101d33;
+        border: 1px solid rgba(96, 165, 250, 0.16);
         transition: 0.3s;
       }
 
       .input-wrapper:focus-within {
-        border-color: rgba(255, 35, 75, 0.5);
-        box-shadow: 0 0 18px rgba(229, 9, 53, 0.08);
+        border-color: rgba(96, 165, 250, 0.5);
+        box-shadow: 0 0 18px rgba(37, 99, 235, 0.10);
       }
 
       .input-wrapper > i {
         font-size: 19px;
-        color: #a98b94;
+        color: #8299ba;
         cursor: pointer;
       }
 
@@ -339,7 +339,7 @@
       }
 
       #messageInput::placeholder {
-        color: #88777d;
+        color: #71819b;
       }
 
       .send-button {
@@ -347,17 +347,17 @@
         height: 43px;
         border: none;
         border-radius: 12px;
-        background: linear-gradient(135deg, #ed1745, #a8002b);
+        background: linear-gradient(135deg, #38bdf8, #a8002b);
         color: white;
         font-size: 20px;
         cursor: pointer;
-        box-shadow: 0 0 18px rgba(229, 9, 53, 0.25);
+        box-shadow: 0 0 18px rgba(37, 99, 235, 0.30);
         transition: 0.3s;
       }
 
       .send-button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 0 25px rgba(229, 9, 53, 0.45);
+        box-shadow: 0 0 25px rgba(37, 99, 235, 0.45);
       }
 
       /* =========================
@@ -503,6 +503,41 @@
         if (emptyChat) {
           emptyChat.remove();
         }
+
+        // New message container
+        const message = document.createElement("div");
+        message.classList.add("message", "sent");
+        
+
+        // Message text
+        const text = document.createElement("div");
+        text.textContent = messageText;
+
+        // Message metadata
+        const meta = document.createElement("div");
+        meta.classList.add("message-meta");
+
+        // Current time
+        const time = document.createElement("span");
+
+        time.textContent = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Message tick
+        const tick = document.createElement("i");
+        tick.className = "ri-check-double-line";
+
+        // Elements append karo
+        meta.append(time, tick);
+        message.append(text, meta);
+
+        // Chat body mein message add karo
+        chatBody.appendChild(message);
+
+        // Latest message par scroll
+        chatBody.scrollTop = chatBody.scrollHeight;
 
         // Input clear karo
         messageInput.value = "";

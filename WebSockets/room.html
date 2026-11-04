@@ -1,0 +1,1550 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Orbit - Room Chat</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Remix Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ==============================
+           RESET & VARIABLES
+        ============================== */
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #050810;
+        --sidebar: #090e1b;
+        --surface: #0e1628;
+        --surface2: #131e34;
+
+        --blue: #3478f6;
+        --blue-light: #60a5fa;
+
+        --text: #edf3ff;
+        --muted: #75839e;
+
+        --border: rgba(100, 149, 237, 0.13);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      button,
+      input {
+        font-family: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      /* ==============================
+           MAIN LAYOUT
+        ============================== */
+
+      .app {
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* ==============================
+           SIDEBAR
+        ============================== */
+
+      .sidebar {
+        width: 270px;
+        min-width: 270px;
+        background: var(--sidebar);
+        border-right: 1px solid var(--border);
+
+        display: flex;
+        flex-direction: column;
+
+        padding: 22px 16px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 8px;
+        margin-bottom: 35px;
+      }
+
+      .brand-logo {
+        width: 39px;
+        height: 39px;
+        background: linear-gradient(135deg, #2563eb, #60a5fa);
+        border-radius: 12px;
+
+        display: grid;
+        place-items: center;
+
+        font-size: 21px;
+        color: white;
+
+        box-shadow: 0 0 25px #2563eb45;
+      }
+
+      .brand h2 {
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .brand span {
+        color: var(--blue-light);
+      }
+
+      .section-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 1.5px;
+        padding: 0 10px;
+        margin-bottom: 15px;
+      }
+
+      /* CREATE ROOM BUTTON */
+
+      .create-room {
+        width: 100%;
+        border: 1px solid #3478f650;
+        background: #3478f610;
+        color: var(--blue-light);
+
+        padding: 12px;
+        border-radius: 10px;
+
+        font-size: 12px;
+        font-weight: 600;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+
+        transition: 0.3s;
+        margin-bottom: 30px;
+      }
+
+      .create-room:hover {
+        background: #3478f625;
+        box-shadow: 0 0 20px #3478f625;
+      }
+
+      .room-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .room-item {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+
+        padding: 12px 10px;
+        border-radius: 10px;
+
+        color: var(--muted);
+        font-size: 12px;
+
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .room-item:hover {
+        background: var(--surface);
+        color: white;
+      }
+
+      .room-item.active {
+        background: #3478f61c;
+        color: var(--blue-light);
+        border: 1px solid #3478f625;
+      }
+
+      .room-item i {
+        font-size: 17px;
+      }
+
+      .room-count {
+        margin-left: auto;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      /* SIDEBAR BOTTOM */
+
+      .sidebar-bottom {
+        margin-top: auto;
+        border-top: 1px solid var(--border);
+        padding-top: 18px;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+      }
+
+      .profile-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+
+        background: linear-gradient(135deg, #164eab, #60a5fa);
+
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+      }
+
+      .profile-info h4 {
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+
+      .profile-info p {
+        color: #32d69a;
+        font-size: 10px;
+      }
+
+      /* ==============================
+           MAIN CHAT AREA
+        ============================== */
+
+      .main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      /* TOP HEADER */
+
+      .topbar {
+        height: 76px;
+        padding: 0 27px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        border-bottom: 1px solid var(--border);
+        background: #090e1be8;
+      }
+
+      .room-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .room-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+
+        display: grid;
+        place-items: center;
+
+        background: #3478f61b;
+        color: var(--blue-light);
+        font-size: 20px;
+      }
+
+      .room-heading h3 {
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .room-heading p {
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .icon-button {
+        width: 36px;
+        height: 36px;
+
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: #a8b6d0;
+
+        border-radius: 10px;
+        font-size: 17px;
+      }
+
+      .icon-button:hover {
+        color: var(--blue-light);
+        border-color: var(--blue);
+      }
+
+      .leave-button {
+        padding: 10px 14px;
+        border-radius: 9px;
+
+        background: #ef444415;
+        border: 1px solid #ef444430;
+        color: #f87171;
+
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      /* ==============================
+           CHAT MESSAGES
+        ============================== */
+
+      .chat-area {
+        flex: 1;
+        overflow-y: auto;
+
+        padding: 25px 35px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+
+        background: radial-gradient(
+          ellipse at 50% 40%,
+          #2563eb0b,
+          transparent 65%
+        );
+      }
+
+      .chat-area::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      .chat-area::-webkit-scrollbar-thumb {
+        background: #243b65;
+        border-radius: 10px;
+      }
+
+      .date-label {
+        align-self: center;
+        font-size: 10px;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 7px 13px;
+        border-radius: 20px;
+      }
+
+      .message-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        max-width: 75%;
+        animation: showMessage 0.25s ease;
+      }
+
+      @keyframes showMessage {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message-row.own {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+      }
+
+      .message-avatar {
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+
+        border-radius: 11px;
+
+        background: linear-gradient(135deg, #164eab, #3b82f6);
+
+        display: grid;
+        place-items: center;
+
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .message-content {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .own .message-content {
+        align-items: flex-end;
+      }
+
+      .message-user {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+      }
+
+      .message-user strong {
+        font-size: 11px;
+      }
+
+      .message-user span {
+        font-size: 9px;
+        color: var(--muted);
+      }
+
+      .message-bubble {
+        padding: 12px 15px;
+
+        background: #111c30;
+        border: 1px solid var(--border);
+
+        border-radius: 4px 14px 14px 14px;
+
+        font-size: 12px;
+        line-height: 1.6;
+
+        word-break: break-word;
+      }
+
+      .own .message-bubble {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        border: none;
+
+        border-radius: 14px 4px 14px 14px;
+
+        box-shadow: 0 5px 20px #2563eb20;
+      }
+
+      /* TYPING STATUS */
+
+      .typing {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        font-size: 10px;
+        color: var(--muted);
+        padding-left: 5px;
+      }
+
+      .typing.active {
+        display: flex;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 3px;
+      }
+
+      .typing-dots span {
+        width: 4px;
+        height: 4px;
+        background: var(--blue-light);
+        border-radius: 50%;
+        animation: bounce 0.7s infinite alternate;
+      }
+
+      .typing-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes bounce {
+        to {
+          transform: translateY(-4px);
+        }
+      }
+
+      /* ==============================
+           EMPTY ROOM SCREEN
+        ============================== */
+
+      .empty-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 13px;
+      }
+
+      .empty-state i {
+        font-size: 50px;
+        color: var(--blue);
+        filter: drop-shadow(0 0 20px #3478f680);
+      }
+
+      .empty-state h2 {
+        font-size: 19px;
+      }
+
+      .empty-state p {
+        font-size: 12px;
+        color: var(--muted);
+        max-width: 300px;
+        line-height: 1.7;
+      }
+
+      /* ==============================
+           MESSAGE INPUT
+        ============================== */
+
+      .chat-footer {
+        padding: 18px 25px 22px;
+        border-top: 1px solid var(--border);
+        background: #090e1b;
+      }
+
+      .input-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        background: var(--surface);
+        border: 1px solid var(--border);
+
+        padding: 9px 13px;
+        border-radius: 12px;
+
+        transition: 0.3s;
+      }
+
+      .input-box:focus-within {
+        border-color: #3478f680;
+        box-shadow: 0 0 20px #3478f610;
+      }
+
+      .input-box input {
+        flex: 1;
+        min-width: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: white;
+        font-size: 12px;
+      }
+
+      .input-box input::placeholder {
+        color: var(--muted);
+      }
+
+      .input-box i {
+        font-size: 19px;
+        color: var(--muted);
+      }
+
+      .send-btn {
+        width: 39px;
+        height: 39px;
+
+        border: none;
+        border-radius: 10px;
+
+        background: linear-gradient(135deg, #3478f6, #1d4ed8);
+        color: white;
+        font-size: 18px;
+
+        box-shadow: 0 0 15px #3478f640;
+      }
+
+      /* ==============================
+           JOIN ROOM OVERLAY
+        ============================== */
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+
+        background: #03060dcc;
+        backdrop-filter: blur(12px);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        z-index: 10;
+        padding: 20px;
+      }
+
+      .join-card {
+        width: 100%;
+        max-width: 390px;
+
+        padding: 32px;
+
+        background: #0d1629;
+        border: 1px solid #3478f640;
+        border-radius: 20px;
+
+        box-shadow: 0 0 70px #2563eb20;
+
+        animation: showCard 0.3s ease;
+      }
+
+      @keyframes showCard {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .join-logo {
+        width: 55px;
+        height: 55px;
+        margin: 0 auto 18px;
+
+        display: grid;
+        place-items: center;
+
+        background: #3478f620;
+        color: var(--blue-light);
+
+        border: 1px solid #3478f650;
+        border-radius: 16px;
+
+        font-size: 26px;
+        box-shadow: 0 0 25px #3478f625;
+      }
+
+      .join-card h1 {
+        font-size: 21px;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .join-card > p {
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+        margin-bottom: 28px;
+        line-height: 1.6;
+      }
+
+      .form-group {
+        margin-bottom: 17px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 9px;
+        color: #bdcce5;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 13px;
+
+        border: 1px solid var(--border);
+        border-radius: 10px;
+
+        background: #080f1e;
+        color: white;
+
+        outline: none;
+        font-size: 12px;
+      }
+
+      .form-group input:focus {
+        border-color: var(--blue);
+      }
+
+      .join-btn {
+        width: 100%;
+        padding: 14px;
+
+        background: linear-gradient(135deg, #3478f6, #1d4ed8);
+        border: none;
+        border-radius: 10px;
+
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+
+        margin-top: 8px;
+
+        box-shadow: 0 5px 25px #2563eb35;
+        transition: 0.3s;
+      }
+
+      .join-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 30px #2563eb70;
+      }
+
+      .join-error {
+        font-size: 10px;
+        color: #f87171;
+        margin-top: 12px;
+        text-align: center;
+      }
+
+      /* ==============================
+           MODAL
+        ============================== */
+
+      .modal {
+        position: absolute;
+        inset: 0;
+
+        z-index: 20;
+
+        background: #03060dbb;
+        backdrop-filter: blur(8px);
+
+        display: none;
+        align-items: center;
+        justify-content: center;
+
+        padding: 20px;
+      }
+
+      .modal.show {
+        display: flex;
+      }
+
+      .modal-card {
+        width: 100%;
+        max-width: 350px;
+
+        padding: 25px;
+
+        background: #0e192e;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+      }
+
+      .modal-card h3 {
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+
+      .modal-card input {
+        width: 100%;
+        padding: 13px;
+
+        background: #080f1e;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+
+        color: white;
+        outline: none;
+        margin-bottom: 15px;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .modal-actions button {
+        flex: 1;
+        padding: 11px;
+        border-radius: 8px;
+        border: none;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .cancel-btn {
+        background: #1a2942;
+        color: white;
+      }
+
+      .confirm-btn {
+        background: var(--blue);
+        color: white;
+      }
+
+      /* HIDDEN */
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ==============================
+           RESPONSIVE
+        ============================== */
+
+      @media (max-width: 700px) {
+        .sidebar {
+          width: 65px;
+          min-width: 65px;
+          padding: 18px 8px;
+          align-items: center;
+        }
+
+        .brand {
+          padding: 0;
+          margin-bottom: 35px;
+        }
+
+        .brand h2,
+        .section-label,
+        .room-name,
+        .room-count,
+        .create-text,
+        .profile-info {
+          display: none;
+        }
+
+        .create-room {
+          width: 42px;
+          height: 42px;
+          padding: 0;
+        }
+
+        .room-item {
+          justify-content: center;
+          padding: 12px;
+        }
+
+        .profile {
+          padding: 0;
+        }
+
+        .topbar {
+          padding: 0 14px;
+        }
+
+        .chat-area {
+          padding: 20px 12px;
+        }
+
+        .message-row {
+          max-width: 90%;
+        }
+
+        .chat-footer {
+          padding: 12px;
+        }
+
+        .leave-button {
+          font-size: 9px;
+          padding: 9px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">
+            <i class="ri-orbit-line"></i>
+          </div>
+
+          <h2>orbit<span>.</span></h2>
+        </div>
+
+        <p class="section-label">WORKSPACE</p>
+
+        <button class="create-room" id="createRoomBtn">
+          <i class="ri-add-line"></i>
+
+          <span class="create-text">Create New Room</span>
+        </button>
+
+        <p class="section-label">YOUR ROOMS</p>
+
+        <div class="room-list" id="roomList">
+          <!-- Rooms will be added dynamically -->
+        </div>
+
+        <div class="sidebar-bottom">
+          <div class="profile">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+
+            <div class="profile-info">
+              <h4 id="profileName">Guest User</h4>
+
+              <p>● Online</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- =========================
+         MAIN CHAT
+    ========================== -->
+
+      <main class="main">
+        <!-- HEADER -->
+
+        <header class="topbar">
+          <div class="room-heading">
+            <div class="room-icon">
+              <i class="ri-hashtag"></i>
+            </div>
+
+            <div>
+              <h3 id="headerRoomName">Select a Room</h3>
+
+              <p id="headerRoomInfo">Join a room to start chatting</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <button class="icon-button" id="copyRoomBtn" title="Copy Room ID">
+              <i class="ri-file-copy-line"></i>
+            </button>
+
+            <button class="icon-button" title="Members">
+              <i class="ri-group-line"></i>
+            </button>
+
+            <button class="leave-button" id="leaveRoomBtn">Leave Room</button>
+          </div>
+        </header>
+
+        <!-- CHAT AREA -->
+
+        <section class="chat-area" id="chatArea">
+          <div class="date-label">TODAY</div>
+
+          <div class="empty-state" id="emptyState">
+            <i class="ri-message-3-line"></i>
+
+            <h2>Your space, your conversation.</h2>
+
+            <p>
+              Join a room or create a new room to start connecting with people.
+            </p>
+          </div>
+        </section>
+
+        <!-- TYPING INDICATOR -->
+
+        <div class="typing" id="typingIndicator">
+          <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          Someone is typing...
+        </div>
+
+        <!-- INPUT -->
+
+        <footer class="chat-footer">
+          <form class="input-box" id="messageForm">
+            <i class="ri-attachment-2"></i>
+
+            <input
+              type="text"
+              id="messageInput"
+              placeholder="Join a room to send messages..."
+              disabled
+              autocomplete="off"
+            />
+
+            <i class="ri-emotion-line"></i>
+
+            <button class="send-btn" type="submit" disabled>
+              <i class="ri-send-plane-fill"></i>
+            </button>
+          </form>
+        </footer>
+      </main>
+
+      <!-- =========================
+         JOIN ROOM OVERLAY
+    ========================== -->
+
+      <div class="overlay" id="joinOverlay">
+        <div class="join-card">
+          <div class="join-logo">
+            <i class="ri-door-open-line"></i>
+          </div>
+
+          <h1>Join the conversation</h1>
+
+          <p>Enter your username and room ID to connect with your community.</p>
+
+          <form id="joinForm">
+            <div class="form-group">
+              <label>Your Username</label>
+
+              <input
+                type="text"
+                id="username"
+                placeholder="Enter your username"
+                required
+                maxlength="20"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Room ID</label>
+
+              <input
+                type="text"
+                id="roomId"
+                placeholder="e.g. dev-community"
+                required
+                maxlength="30"
+              />
+            </div>
+
+            <button class="join-btn" type="submit">
+              Join Room <i class="ri-arrow-right-line"></i>
+            </button>
+
+            <p class="join-error" id="joinError"></p>
+          </form>
+        </div>
+      </div>
+
+      <!-- =========================
+         CREATE ROOM MODAL
+    ========================== -->
+
+      <div class="modal" id="createModal">
+        <div class="modal-card">
+          <h3>Create a New Room</h3>
+
+          <input
+            type="text"
+            id="newRoomName"
+            placeholder="Enter room name"
+            maxlength="30"
+          />
+
+          <div class="modal-actions">
+            <button class="cancel-btn" id="cancelModal">Cancel</button>
+
+            <button class="confirm-btn" id="confirmCreate">Create Room</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==============================
+     JAVASCRIPT
+================================ -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+       socket.on("connect", () => {
+        console.log("Connected to server");
+      });
+      // =================================
+      // SELECT DOM ELEMENTS
+      // =================================
+
+      const joinForm = document.getElementById("joinForm");
+
+      const usernameInput = document.getElementById("username");
+
+      const roomIdInput = document.getElementById("roomId");
+
+      const joinOverlay = document.getElementById("joinOverlay");
+
+      const joinError = document.getElementById("joinError");
+
+      const roomList = document.getElementById("roomList");
+
+      const chatArea = document.getElementById("chatArea");
+
+      const messageForm = document.getElementById("messageForm");
+
+      const messageInput = document.getElementById("messageInput");
+
+      const leaveRoomBtn = document.getElementById("leaveRoomBtn");
+
+      const createModal = document.getElementById("createModal");
+
+      // =================================
+      // APPLICATION STATE
+      // =================================
+
+      let currentUser = "";
+
+      let currentRoom = "";
+
+      // Store rooms in an object.
+      // Each room contains its own messages.
+
+      const rooms = {};
+
+      // This tracks room membership in this browser only.
+      // It is NOT real Socket.IO membership.
+
+      const joinedRooms = new Set();
+
+      // =================================
+      // JOIN ROOM
+      // =================================
+
+      joinForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        // Get input values
+
+        const username = usernameInput.value.trim();
+
+        const roomId = roomIdInput.value.trim().toLowerCase();
+
+        // Validate inputs
+
+        if (!username || !roomId) {
+          joinError.textContent = "Please fill in all fields.";
+
+          return;
+        }
+
+        socket.emit("joinRoom", roomId);
+
+        
+        currentUser = username;
+
+        // Create room if it doesn't exist locally
+
+        if (!rooms[roomId]) {
+          rooms[roomId] = {
+            name: roomId,
+            members: 1,
+            messages: [],
+          };
+        }
+
+        // Join the selected room
+
+        joinRoom(roomId);
+
+        // Update profile
+
+        document.getElementById("profileName").textContent = currentUser;
+
+        document.getElementById("profileAvatar").textContent = currentUser
+          .charAt(0)
+          .toUpperCase();
+
+        // Close overlay
+
+        joinOverlay.classList.add("hidden");
+
+        joinError.textContent = "";
+      });
+
+      // =================================
+      // JOIN ROOM FUNCTION
+      // =================================
+
+      function joinRoom(roomId) {
+        // Leave currently selected room in the UI
+
+        if (currentRoom) {
+          currentRoom = "";
+        }
+
+        // Set new current room
+
+        currentRoom = roomId;
+
+        // Track joined room locally
+
+        joinedRooms.add(roomId);
+
+        // Update room header
+
+        updateRoomHeader();
+
+        // Render sidebar
+
+        renderRooms();
+
+        // Enable message input
+
+        messageInput.disabled = false;
+
+        messageInput.placeholder = `Message #${roomId}`;
+
+        messageForm.querySelector("button").disabled = false;
+
+        // Display room messages
+
+        renderMessages();
+
+        // Show confirmation message
+
+        console.log("Joined room:", roomId);
+      }
+
+      // =================================
+      // RENDER ROOMS
+      // =================================
+
+      function renderRooms() {
+        roomList.innerHTML = "";
+
+        joinedRooms.forEach(function (roomId) {
+          const room = rooms[roomId];
+
+          const roomElement = document.createElement("div");
+
+          roomElement.className = "room-item";
+
+          if (currentRoom === roomId) {
+            roomElement.classList.add("active");
+          }
+
+          const icon = document.createElement("i");
+
+          icon.className = "ri-hashtag";
+
+          const name = document.createElement("span");
+
+          name.className = "room-name";
+
+          name.textContent = room.name;
+
+          const count = document.createElement("span");
+
+          count.className = "room-count";
+
+          count.textContent = room.members;
+
+          roomElement.append(icon, name, count);
+
+          // Switch between locally joined rooms
+
+          roomElement.addEventListener("click", function () {
+            joinRoom(roomId);
+          });
+
+          roomList.appendChild(roomElement);
+        });
+      }
+
+      // =================================
+      // UPDATE ROOM HEADER
+      // =================================
+
+      function updateRoomHeader() {
+        document.getElementById("headerRoomName").textContent = currentRoom;
+
+        document.getElementById("headerRoomInfo").textContent =
+          `${rooms[currentRoom].members} member · Room ID: ${currentRoom}`;
+      }
+
+      // =================================
+      // SEND MESSAGE
+      // =================================
+
+      messageForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        
+        const messageText = messageInput.value.trim();
+        
+        if (!messageText || !currentRoom) return;
+        
+        socket.emit("message" , {roomId , messageText})
+        console.log(`Text Message : ${messageText}`)
+
+        // Create message object
+
+        const message = {
+          username: currentUser,
+
+          text: messageText,
+
+          time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+
+        // Save message in current room
+
+        rooms[currentRoom].messages.push(message);
+
+        // Clear input
+
+        messageInput.value = "";
+
+        // Render messages
+
+        renderMessages();
+      });
+
+      // =================================
+      // RENDER MESSAGES
+      // =================================
+
+      function renderMessages() {
+        chatArea.innerHTML = "";
+
+        const date = document.createElement("div");
+
+        date.className = "date-label";
+
+        date.textContent = "TODAY";
+
+        chatArea.appendChild(date);
+
+        const messages = rooms[currentRoom].messages;
+
+        // Empty room
+
+        if (messages.length === 0) {
+          const empty = document.createElement("div");
+
+          empty.className = "empty-state";
+
+          empty.innerHTML = `
+                <i class="ri-chat-smile-3-line"></i>
+                <h2>Welcome to #${currentRoom}</h2>
+                <p>Be the first one to send a message.</p>
+            `;
+
+          chatArea.appendChild(empty);
+
+          return;
+        }
+
+        // Loop through messages
+
+        messages.forEach(function (message) {
+          const isOwn = message.username === currentUser;
+
+          const row = document.createElement("div");
+
+          row.className = "message-row";
+
+          if (isOwn) {
+            row.classList.add("own");
+          }
+
+          const avatar = document.createElement("div");
+
+          avatar.className = "message-avatar";
+
+          avatar.textContent = message.username.charAt(0).toUpperCase();
+
+          const content = document.createElement("div");
+
+          content.className = "message-content";
+
+          const user = document.createElement("div");
+
+          user.className = "message-user";
+
+          const username = document.createElement("strong");
+
+          username.textContent = message.username;
+
+          const time = document.createElement("span");
+
+          time.textContent = message.time;
+
+          user.append(username, time);
+
+          const bubble = document.createElement("div");
+
+          bubble.className = "message-bubble";
+
+          // textContent prevents HTML injection
+
+          bubble.textContent = message.text;
+
+          content.append(user, bubble);
+
+          row.append(avatar, content);
+
+          chatArea.appendChild(row);
+        });
+
+        // Scroll to latest message
+
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      // =================================
+      // LEAVE ROOM
+      // =================================
+
+      leaveRoomBtn.addEventListener("click", function () {
+        if (!currentRoom) return;
+
+        const oldRoom = currentRoom;
+
+        // Remove room from local membership
+
+        joinedRooms.delete(oldRoom);
+
+        currentRoom = "";
+
+        // Update interface
+
+        renderRooms();
+
+        chatArea.innerHTML = `
+            <div class="empty-state">
+                <i class="ri-logout-circle-r-line"></i>
+                <h2>You left the room</h2>
+                <p>Join another room to continue chatting.</p>
+            </div>
+        `;
+
+        document.getElementById("headerRoomName").textContent =
+          "No Room Selected";
+
+        document.getElementById("headerRoomInfo").textContent =
+          "Join a room to start chatting";
+
+        messageInput.disabled = true;
+
+        messageInput.value = "";
+
+        messageInput.placeholder = "Join a room first...";
+
+        messageForm.querySelector("button").disabled = true;
+
+        console.log("Left room:", oldRoom);
+      });
+
+      // =================================
+      // CREATE ROOM
+      // =================================
+
+      document
+        .getElementById("createRoomBtn")
+        .addEventListener("click", function () {
+          createModal.classList.add("show");
+
+          document.getElementById("newRoomName").focus();
+        });
+
+      // CANCEL MODAL
+
+      document
+        .getElementById("cancelModal")
+        .addEventListener("click", function () {
+          createModal.classList.remove("show");
+        });
+
+      // CONFIRM CREATE ROOM
+
+      document
+        .getElementById("confirmCreate")
+        .addEventListener("click", function () {
+          const roomName = document
+            .getElementById("newRoomName")
+            .value.trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-");
+
+          if (!roomName) return;
+
+          if (rooms[roomName]) {
+            alert("Room already exists!");
+
+            return;
+          }
+
+          // Create new local room
+
+          rooms[roomName] = {
+            name: roomName,
+
+            members: 1,
+
+            messages: [],
+          };
+
+          // Join newly created room
+
+          joinRoom(roomName);
+
+          createModal.classList.remove("show");
+
+          document.getElementById("newRoomName").value = "";
+        });
+
+      // =================================
+      // COPY ROOM ID
+      // =================================
+
+      document
+        .getElementById("copyRoomBtn")
+        .addEventListener("click", async function () {
+          if (!currentRoom) return;
+
+          try {
+            await navigator.clipboard.writeText(currentRoom);
+
+            alert("Room ID copied!");
+          } catch (error) {
+            console.error("Copy failed:", error);
+          }
+        });
+
+      // =================================
+      // INITIAL STATE
+      // =================================
+
+      messageInput.disabled = true;
+
+      messageForm.querySelector("button").disabled = true;
+    </script>
+  </body>
+</html>
