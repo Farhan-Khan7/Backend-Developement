@@ -43,9 +43,9 @@ io.on("connection", (socket) => {
         console.log(`User ${socket.id} joined room: ${roomId}`);
     });
 
-    socket.on("message", ({roomId , messageText}) => {
-        socket.to(roomId).emit("new-message" , messageText)
-        console.log("Room ID : ", roomId , "\n" , "Message : " , messageText)
+    socket.on("message", ({room , msg}) => {
+        socket.to(room).emit("new-message", { msg });
+        console.log("Room ID : ", room , "\n" , "Message : " , msg)
     })
 
     // Client disconnect
