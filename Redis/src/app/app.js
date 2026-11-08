@@ -1,9 +1,13 @@
 import express from "express";
 import Post from "../model/Post.model.js";
+import { Redis } from "ioredis";
 
 const app = express();
+const redis = new Redis();
 
-
+redis.once("connect" , () => {
+    console.log("Redis connected successfully")
+})
 
 let count = 0;
 function reqCounter() {
@@ -12,6 +16,9 @@ function reqCounter() {
 
 
 app.get("/:postId/details", async (req, res) => {
+
+    const findPostInCache = await redis.get(`post:${req.params.postId}`);
+
     const postId = req.params.postId;
 
     if (!postId) {
@@ -22,6 +29,16 @@ app.get("/:postId/details", async (req, res) => {
 
     console.log(`Request count : ${reqCounter()}`);
 
+    if (findPostInCache) {
+        return res.status(200).json({
+            success: true,
+            message: "Post details fetched from cache",
+            data: {
+                post: JSON.parse(findPostInCache)
+            }
+        });
+    }
+
     const post = await Post.findById(postId);
 
 
@@ -30,6 +47,8 @@ app.get("/:postId/details", async (req, res) => {
             error: "Post not found"
         });
     }
+
+    const setPostInCache = await redis.set(`post:${postId}`, JSON.stringify(post), "EX", 3600); // Cache for 1 hour
 
     return res.status(200).json({
         success: true,
