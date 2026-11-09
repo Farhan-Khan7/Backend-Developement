@@ -1,325 +1,656 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crimson Check — Join My Network</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crimson Check — Join My Network</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap");
 
-    :root {
-      --crimson: #C50337;
-      --black: #02060E;
-      --wine: #510019;
-      --white: #F8F4F6;
-      --muted: #A99AA1;
-      --line: rgba(255,255,255,.10);
-      --panel: rgba(9, 8, 16, .78);
-    }
+      :root {
+        --crimson: #c50337;
+        --black: #02060e;
+        --wine: #510019;
+        --white: #f8f4f6;
+        --muted: #a99aa1;
+        --line: rgba(255, 255, 255, 0.1);
+        --panel: rgba(9, 8, 16, 0.78);
+      }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    body {
-      min-height: 100vh;
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      background:
-        radial-gradient(ellipse at 8% 0%, rgba(197,3,55,.35), transparent 38%),
-        radial-gradient(ellipse at 100% 100%, rgba(139,0,45,.28), transparent 42%),
-        linear-gradient(135deg, #08030A 0%, #21000D 52%, #02060E 100%);
-    }
+      body {
+        min-height: 100vh;
+        color: var(--white);
+        font-family: "DM Sans", sans-serif;
+        background:
+          radial-gradient(
+            ellipse at 8% 0%,
+            rgba(197, 3, 55, 0.35),
+            transparent 38%
+          ),
+          radial-gradient(
+            ellipse at 100% 100%,
+            rgba(139, 0, 45, 0.28),
+            transparent 42%
+          ),
+          linear-gradient(135deg, #08030a 0%, #21000d 52%, #02060e 100%);
+      }
 
-    .page-shell { width: min(1500px, 100%); margin: auto; padding: 24px 34px 40px; }
+      .page-shell {
+        width: min(1500px, 100%);
+        margin: auto;
+        padding: 24px 34px 40px;
+      }
 
-    /* Top navigation: analytics are now part of the navbar */
-    .navbar {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 22px;
-      padding: 14px 18px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: rgba(2,6,14,.78);
-      backdrop-filter: blur(22px);
-      box-shadow: 0 16px 45px rgba(0,0,0,.24);
-    }
+      /* Top navigation: analytics are now part of the navbar */
+      .navbar {
+        min-height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+        padding: 14px 18px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(2, 6, 14, 0.78);
+        backdrop-filter: blur(22px);
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.24);
+      }
 
-    .brand { display: flex; align-items: center; gap: 12px; min-width: 190px; }
-    .brand-mark {
-      width: 42px; height: 42px; display: grid; place-items: center;
-      border-radius: 13px; font: 700 21px 'Space Grotesk', sans-serif;
-      background: linear-gradient(140deg, #F12C61, #760020);
-      box-shadow: 0 5px 24px rgba(197,3,55,.35);
-    }
-    .brand-name { font: 700 17px 'Space Grotesk', sans-serif; letter-spacing: -.5px; }
-    .brand-caption { margin-top: 3px; color: var(--muted); font-size: 9px; letter-spacing: 1.5px; }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 190px;
+      }
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        font:
+          700 21px "Space Grotesk",
+          sans-serif;
+        background: linear-gradient(140deg, #f12c61, #760020);
+        box-shadow: 0 5px 24px rgba(197, 3, 55, 0.35);
+      }
+      .brand-name {
+        font:
+          700 17px "Space Grotesk",
+          sans-serif;
+        letter-spacing: -0.5px;
+      }
+      .brand-caption {
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 9px;
+        letter-spacing: 1.5px;
+      }
 
-    .nav-stats { display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1; }
-    .nav-stat {
-      display: flex; align-items: center; gap: 9px;
-      min-width: 112px; padding: 10px 13px;
-      border: 1px solid var(--line); border-radius: 12px;
-      background: rgba(255,255,255,.035);
-    }
-    .stat-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; }
-    .stat-dot.checked { background: #FF4777; box-shadow: 0 0 12px #C50337; }
-    .stat-dot.unchecked { background: #69717F; }
-    .stat-label { color: var(--muted); font-size: 10px; }
-    .stat-value { margin-top: 2px; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .nav-stats {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex: 1;
+      }
+      .nav-stat {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 112px;
+        padding: 10px 13px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.035);
+      }
+      .stat-dot {
+        width: 8px;
+        height: 8px;
+        flex: 0 0 8px;
+        border-radius: 50%;
+      }
+      .stat-dot.checked {
+        background: #ff4777;
+        box-shadow: 0 0 12px #c50337;
+      }
+      .stat-dot.unchecked {
+        background: #69717f;
+      }
+      .stat-label {
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .stat-value {
+        margin-top: 2px;
+        font-size: 14px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
 
-    .auth-actions { display: flex; align-items: center; gap: 9px; }
-    .auth-btn {
-      border: 1px solid rgba(255,255,255,.18); border-radius: 10px;
-      padding: 10px 15px; color: var(--white); background: transparent;
-      font: 600 11px 'DM Sans', sans-serif; cursor: pointer;
-    }
-    .auth-btn.signup {
-      border-color: transparent; background: linear-gradient(135deg, #E21A50, #99002C);
-      box-shadow: 0 5px 18px rgba(197,3,55,.25);
-    }
+      .auth-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .auth-btn {
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        padding: 10px 15px;
+        color: var(--white);
+        background: transparent;
+        font:
+          600 11px "DM Sans",
+          sans-serif;
+        cursor: pointer;
+      }
+      .auth-btn.signup {
+        border-color: transparent;
+        background: linear-gradient(135deg, #e21a50, #99002c);
+        box-shadow: 0 5px 18px rgba(197, 3, 55, 0.25);
+      }
 
-    .welcome { padding: 42px 4px 28px; }
-    .eyebrow { color: #FF789A; font-size: 10px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; }
-    .welcome h1 {
-      max-width: 760px; margin-top: 12px;
-      font: 600 clamp(28px, 4vw, 45px)/1.12 'Space Grotesk', sans-serif;
-      letter-spacing: -1.8px;
-    }
-    .welcome h1 span { color: #FF4777; }
-    .welcome p { max-width: 650px; margin-top: 13px; color: #B9AAB1; font-size: 13px; line-height: 1.8; }
+      .welcome {
+        padding: 42px 4px 28px;
+      }
+      .eyebrow {
+        color: #ff789a;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2.4px;
+        text-transform: uppercase;
+      }
+      .welcome h1 {
+        max-width: 760px;
+        margin-top: 12px;
+        font:
+          600 clamp(28px, 4vw, 45px)/1.12 "Space Grotesk",
+          sans-serif;
+        letter-spacing: -1.8px;
+      }
+      .welcome h1 span {
+        color: #ff4777;
+      }
+      .welcome p {
+        max-width: 650px;
+        margin-top: 13px;
+        color: #b9aab1;
+        font-size: 13px;
+        line-height: 1.8;
+      }
 
-    /* Main area: 70% checkbox grid, 30% checked people panel */
-    .workspace { display: grid; grid-template-columns: minmax(0, 7fr) minmax(280px, 3fr); gap: 20px; align-items: start; }
+      /* Main area: 70% checkbox grid, 30% checked people panel */
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(280px, 3fr);
+        gap: 20px;
+        align-items: start;
+      }
 
-    .panel {
-      min-width: 0; overflow: hidden;
-      border: 1px solid var(--line); border-radius: 20px;
-      background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.012));
-      box-shadow: 0 18px 55px rgba(0,0,0,.22);
-    }
-    .panel-header {
-      display: flex; justify-content: space-between; align-items: center; gap: 12px;
-      padding: 19px 21px; border-bottom: 1px solid var(--line);
-    }
-    .panel-title { font: 600 14px 'Space Grotesk', sans-serif; }
-    .panel-subtitle { margin-top: 4px; color: var(--muted); font-size: 10px; }
-    .count-pill {
-      padding: 6px 10px; border: 1px solid rgba(255,71,119,.25);
-      border-radius: 30px; color: #FF8BA7; background: rgba(197,3,55,.12);
-      font-size: 10px; white-space: nowrap;
-    }
+      .panel {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.055),
+          rgba(255, 255, 255, 0.012)
+        );
+        box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
+      }
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 19px 21px;
+        border-bottom: 1px solid var(--line);
+      }
+      .panel-title {
+        font:
+          600 14px "Space Grotesk",
+          sans-serif;
+      }
+      .panel-subtitle {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .count-pill {
+        padding: 6px 10px;
+        border: 1px solid rgba(255, 71, 119, 0.25);
+        border-radius: 30px;
+        color: #ff8ba7;
+        background: rgba(197, 3, 55, 0.12);
+        font-size: 10px;
+        white-space: nowrap;
+      }
 
-    .grid-content { padding: 20px; }
-    .grid-toolbar { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 17px; color: var(--muted); font-size: 10px; }
-    #checkbox-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(25px, 1fr));
-      gap: 9px;
-    }
-    #checkbox-container input[type="checkbox"] {
-      appearance: none; width: 100%; max-width: 30px; aspect-ratio: 1;
-      cursor: pointer; border: 1px solid #59404A; border-radius: 7px;
-      background: linear-gradient(145deg, #17121A, #070A12); transition: .18s ease;
-    }
-    #checkbox-container input[type="checkbox"]:hover {
-      border-color: #FF4777; transform: scale(1.1); box-shadow: 0 0 13px #C5033755;
-    }
-    #checkbox-container input[type="checkbox"]:checked {
-      border-color: #FF789A; background: linear-gradient(135deg, #FF315F, #970026);
-      box-shadow: 0 0 12px #C5033760;
-    }
-    #checkbox-container input[type="checkbox"]:checked::after {
-      content: "✓"; display: grid; place-items: center; height: 100%;
-      color: white; font-size: 13px; font-weight: 800;
-    }
+      .grid-content {
+        padding: 20px;
+      }
+      .grid-toolbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 17px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      #checkbox-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(25px, 1fr));
+        gap: 9px;
+      }
+      #checkbox-container input[type="checkbox"] {
+        appearance: none;
+        width: 100%;
+        max-width: 30px;
+        aspect-ratio: 1;
+        cursor: pointer;
+        border: 1px solid #59404a;
+        border-radius: 7px;
+        background: linear-gradient(145deg, #17121a, #070a12);
+        transition: 0.18s ease;
+      }
+      #checkbox-container input[type="checkbox"]:hover {
+        border-color: #ff4777;
+        transform: scale(1.1);
+        box-shadow: 0 0 13px #c5033755;
+      }
+      #checkbox-container input[type="checkbox"]:checked {
+        border-color: #ff789a;
+        background: linear-gradient(135deg, #ff315f, #970026);
+        box-shadow: 0 0 12px #c5033760;
+      }
+      #checkbox-container input[type="checkbox"]:checked::after {
+        content: "✓";
+        display: grid;
+        place-items: center;
+        height: 100%;
+        color: white;
+        font-size: 13px;
+        font-weight: 800;
+      }
 
-    .people-panel { position: sticky; top: 20px; }
-    .people-summary { display: flex; align-items: center; gap: 12px; padding: 17px 19px; border-bottom: 1px solid var(--line); }
-    .avatar-stack { display: flex; padding-left: 5px; }
-    .avatar-stack .avatar { margin-left: -5px; border: 2px solid #160811; }
-    .avatar {
-      width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto;
-      border-radius: 50%; color: white; font-size: 10px; font-weight: 700;
-      background: linear-gradient(145deg, #D51B50, #4C0922);
-    }
-    .avatar.alt { background: linear-gradient(145deg, #59677C, #202938); }
-    .avatar.gold { background: linear-gradient(145deg, #A77A65, #4B2830); }
-    .summary-copy strong { display: block; font-size: 12px; }
-    .summary-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+      .people-panel {
+        position: sticky;
+        top: 20px;
+      }
+      .people-summary {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 17px 19px;
+        border-bottom: 1px solid var(--line);
+      }
+      .avatar-stack {
+        display: flex;
+        padding-left: 5px;
+      }
+      .avatar-stack .avatar {
+        margin-left: -5px;
+        border: 2px solid #160811;
+      }
+      .avatar {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 50%;
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        background: linear-gradient(145deg, #d51b50, #4c0922);
+      }
+      .avatar.alt {
+        background: linear-gradient(145deg, #59677c, #202938);
+      }
+      .avatar.gold {
+        background: linear-gradient(145deg, #a77a65, #4b2830);
+      }
+      .summary-copy strong {
+        display: block;
+        font-size: 12px;
+      }
+      .summary-copy span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 10px;
+      }
 
-    .people-list { padding: 5px 18px 16px; }
-    .person {
-      display: flex; align-items: center; gap: 11px;
-      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.055);
-    }
-    .person:last-child { border-bottom: 0; }
-    .person-info { min-width: 0; flex: 1; }
-    .person-name { overflow: hidden; color: #F7EAF0; font-size: 11px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-    .person-handle { margin-top: 4px; color: var(--muted); font-size: 9px; }
-    .joined-tag { color: #FF789A; font-size: 9px; white-space: nowrap; }
+      .people-list {
+        padding: 5px 18px 16px;
+      }
+      .person {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+      }
+      .person:last-child {
+        border-bottom: 0;
+      }
+      .person-info {
+        min-width: 0;
+        flex: 1;
+      }
+      .person-name {
+        overflow: hidden;
+        color: #f7eaf0;
+        font-size: 11px;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .person-handle {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 9px;
+      }
+      .joined-tag {
+        color: #ff789a;
+        font-size: 9px;
+        white-space: nowrap;
+      }
 
-    .people-note {
-      margin: 0 18px 18px; padding: 12px;
-      border: 1px solid rgba(197,3,55,.2); border-radius: 12px;
-      color: #C5AEB8; background: rgba(197,3,55,.07);
-      font-size: 10px; line-height: 1.6;
-    }
-    .footer { display: flex; justify-content: space-between; gap: 12px; padding: 22px 3px 0; color: #8F7D86; font-size: 9px; letter-spacing: 1px; }
+      .people-note {
+        margin: 0 18px 18px;
+        padding: 12px;
+        border: 1px solid rgba(197, 3, 55, 0.2);
+        border-radius: 12px;
+        color: #c5aeb8;
+        background: rgba(197, 3, 55, 0.07);
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 22px 3px 0;
+        color: #8f7d86;
+        font-size: 9px;
+        letter-spacing: 1px;
+      }
 
-    @media (max-width: 1050px) {
-      .page-shell { padding: 18px; }
-      .navbar { flex-wrap: wrap; }
-      .nav-stats { order: 3; flex-basis: 100%; }
-      .workspace { grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr); }
-    }
-    @media (max-width: 720px) {
-      .workspace { grid-template-columns: 1fr; }
-      .people-panel { position: static; }
-      .welcome { padding-top: 32px; }
-      .nav-stats { justify-content: flex-start; overflow-x: auto; }
-      .nav-stat { min-width: 105px; }
-    }
-    @media (max-width: 480px) {
-      .page-shell { padding: 12px; }
-      .navbar { padding: 12px; border-radius: 15px; }
-      .brand { min-width: 0; }
-      .brand-name { font-size: 14px; }
-      .brand-caption { font-size: 8px; }
-      .auth-actions { gap: 6px; }
-      .auth-btn { padding: 9px 10px; font-size: 10px; }
-      .nav-stats { gap: 7px; }
-      .nav-stat { min-width: 98px; padding: 8px; }
-      .grid-content { padding: 13px; }
-      #checkbox-container { grid-template-columns: repeat(auto-fill, minmax(20px, 1fr)); gap: 6px; }
-      #checkbox-container input[type="checkbox"] { border-radius: 5px; }
-      .footer { flex-direction: column; }
-    }
-  </style>
-</head>
-<body>
-  <main class="page-shell">
-    <nav class="navbar">
-      <div class="brand">
-        <div class="brand-mark">1</div>
-        <div>
-          <div class="brand-name">Million Connections</div>
-          <div class="brand-caption">ONE CHECK. ONE CONNECTION.</div>
-        </div>
-      </div>
-
-      <div class="nav-stats" aria-label="Checkbox statistics">
-        <div class="nav-stat">
-          <span class="stat-dot checked"></span>
-          <div><div class="stat-label">Checked</div><div class="stat-value" id="checked-count">0</div></div>
-        </div>
-        <div class="nav-stat">
-          <span class="stat-dot unchecked"></span>
-          <div><div class="stat-label">Unchecked</div><div class="stat-value" id="unchecked-count">0</div></div>
-        </div>
-        <div class="nav-stat">
-          <div><div class="stat-label">Completion</div><div class="stat-value" id="progress-percent">0%</div></div>
-        </div>
-      </div>
-
-      <div class="auth-actions">
-        <button class="auth-btn" type="button">Log in</button>
-        <button class="auth-btn signup" type="button">Sign up</button>
-      </div>
-    </nav>
-
-    <section class="welcome">
-      <div class="eyebrow">Your Network Is Your Net Worth.</div>
-      <h1>If you know me, <span>please check</span> and join my network.</h1>
-      <p>Find your place in this little corner of the internet. If we know each other, mark a box and let’s connect.</p>
-    </section>
-
-    <section class="workspace">
-      <section class="panel checkbox-panel">
-        <div class="panel-header">
+      @media (max-width: 1050px) {
+        .page-shell {
+          padding: 18px;
+        }
+        .navbar {
+          flex-wrap: wrap;
+        }
+        .nav-stats {
+          order: 3;
+          flex-basis: 100%;
+        }
+        .workspace {
+          grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
+        }
+      }
+      @media (max-width: 720px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+        .people-panel {
+          position: static;
+        }
+        .welcome {
+          padding-top: 32px;
+        }
+        .nav-stats {
+          justify-content: flex-start;
+          overflow-x: auto;
+        }
+        .nav-stat {
+          min-width: 105px;
+        }
+      }
+      @media (max-width: 480px) {
+        .page-shell {
+          padding: 12px;
+        }
+        .navbar {
+          padding: 12px;
+          border-radius: 15px;
+        }
+        .brand {
+          min-width: 0;
+        }
+        .brand-name {
+          font-size: 14px;
+        }
+        .brand-caption {
+          font-size: 8px;
+        }
+        .auth-actions {
+          gap: 6px;
+        }
+        .auth-btn {
+          padding: 9px 10px;
+          font-size: 10px;
+        }
+        .nav-stats {
+          gap: 7px;
+        }
+        .nav-stat {
+          min-width: 98px;
+          padding: 8px;
+        }
+        .grid-content {
+          padding: 13px;
+        }
+        #checkbox-container {
+          grid-template-columns: repeat(auto-fill, minmax(20px, 1fr));
+          gap: 6px;
+        }
+        #checkbox-container input[type="checkbox"] {
+          border-radius: 5px;
+        }
+        .footer {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <nav class="navbar">
+        <div class="brand">
+          <div class="brand-mark">1</div>
           <div>
-            <div class="panel-title">The Checkbox Wall</div>
-            <div class="panel-subtitle">Choose a box and be part of the wall.</div>
+            <div class="brand-name">Million Connections</div>
+            <div class="brand-caption">ONE CHECK. ONE CONNECTION.</div>
           </div>
-          <span class="count-pill" id="total-count">Loading boxes...</span>
         </div>
-        <div class="grid-content">
-          <div class="grid-toolbar">
-            <span>SELECT YOUR BOX</span>
-            <span>CRIMSON / NOIR</span>
+
+        <div class="nav-stats" aria-label="Checkbox statistics">
+          <div class="nav-stat">
+            <span class="stat-dot checked"></span>
+            <div>
+              <div class="stat-label">Checked</div>
+              <div class="stat-value" id="checked-count">0</div>
+            </div>
           </div>
-          <div id="checkbox-container"></div>
+          <div class="nav-stat">
+            <span class="stat-dot unchecked"></span>
+            <div>
+              <div class="stat-label">Unchecked</div>
+              <div class="stat-value" id="unchecked-count">0</div>
+            </div>
+          </div>
+          <div class="nav-stat">
+            <div>
+              <div class="stat-label">Completion</div>
+              <div class="stat-value" id="progress-percent">0%</div>
+            </div>
+          </div>
         </div>
+
+        <div class="auth-actions">
+          <button class="auth-btn" type="button">Log in</button>
+          <button class="auth-btn signup" type="button">Sign up</button>
+        </div>
+      </nav>
+
+      <section class="welcome">
+        <div class="eyebrow">Your Network Is Your Net Worth.</div>
+        <h1>If you know me, <span>please check</span> and join my network.</h1>
+        <p>
+          Find your place in this little corner of the internet. If we know each
+          other, mark a box and let’s connect.
+        </p>
       </section>
 
-      <aside class="panel people-panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">People on the Wall</div>
-            <div class="panel-subtitle">A glimpse of the community</div>
+      <section class="workspace">
+        <section class="panel checkbox-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">The Checkbox Wall</div>
+              <div class="panel-subtitle">
+                Choose a box and be part of the wall.
+              </div>
+            </div>
+            <span class="count-pill" id="total-count">Loading boxes...</span>
           </div>
-          <span class="count-pill">COMMUNITY</span>
-        </div>
+          <div class="grid-content">
+            <div class="grid-toolbar">
+              <span>SELECT YOUR BOX</span>
+              <span>CRIMSON / NOIR</span>
+            </div>
+            <div id="checkbox-container"></div>
+          </div>
+        </section>
 
-        <div class="people-summary">
-          <div class="avatar-stack">
-            <div class="avatar">AK</div>
-            <div class="avatar alt">RS</div>
-            <div class="avatar gold">MK</div>
+        <aside class="panel people-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">People on the Wall</div>
+              <div class="panel-subtitle">A glimpse of the community</div>
+            </div>
+            <span class="count-pill">COMMUNITY</span>
           </div>
-          <div class="summary-copy">
-            <strong>People who checked in</strong>
-            <span>Community members</span>
-          </div>
-        </div>
 
-        <!-- Static sample entries: connect real users here when authentication/backend is added. -->
-        <div class="people-list">
-          <div class="person">
-            <div class="avatar">AK</div>
-            <div class="person-info"><div class="person-name">Aarav Kumar</div><div class="person-handle">@aarav.codes</div></div>
-            <span class="joined-tag">Checked</span>
+          <div class="people-summary">
+            <div class="avatar-stack">
+              <div class="avatar">AK</div>
+              <div class="avatar alt">RS</div>
+              <div class="avatar gold">MK</div>
+            </div>
+            <div class="summary-copy">
+              <strong>People who checked in</strong>
+              <span>Community members</span>
+            </div>
           </div>
-          <div class="person">
-            <div class="avatar alt">RS</div>
-            <div class="person-info"><div class="person-name">Riya Sharma</div><div class="person-handle">@riya.designs</div></div>
-            <span class="joined-tag">Checked</span>
+
+          <!-- Static sample entries: connect real users here when authentication/backend is added. -->
+          <div class="people-list">
+            <div class="person">
+              <div class="avatar">AK</div>
+              <div class="person-info">
+                <div class="person-name">Aarav Kumar</div>
+                <div class="person-handle">@aarav.codes</div>
+              </div>
+              <span class="joined-tag">Checked</span>
+            </div>
+            <div class="person">
+              <div class="avatar alt">RS</div>
+              <div class="person-info">
+                <div class="person-name">Riya Sharma</div>
+                <div class="person-handle">@riya.designs</div>
+              </div>
+              <span class="joined-tag">Checked</span>
+            </div>
+            <div class="person">
+              <div class="avatar gold">MK</div>
+              <div class="person-info">
+                <div class="person-name">Mohit Khan</div>
+                <div class="person-handle">@mohit.dev</div>
+              </div>
+              <span class="joined-tag">Checked</span>
+            </div>
+            <div class="person">
+              <div class="avatar">SP</div>
+              <div class="person-info">
+                <div class="person-name">Sana Patel</div>
+                <div class="person-handle">@sana.builds</div>
+              </div>
+              <span class="joined-tag">Checked</span>
+            </div>
           </div>
-          <div class="person">
-            <div class="avatar gold">MK</div>
-            <div class="person-info"><div class="person-name">Mohit Khan</div><div class="person-handle">@mohit.dev</div></div>
-            <span class="joined-tag">Checked</span>
+
+          <div class="people-note">
+            Your people, your network. Sign in to make your check-in part of the
+            community.
           </div>
-          <div class="person">
-            <div class="avatar">SP</div>
-            <div class="person-info"><div class="person-name">Sana Patel</div><div class="person-handle">@sana.builds</div></div>
-            <span class="joined-tag">Checked</span>
-          </div>
-        </div>
+        </aside>
+      </section>
 
-        <div class="people-note">
-          Your people, your network. Sign in to make your check-in part of the community.
-        </div>
-      </aside>
-    </section>
+      <footer class="footer">
+        <span>CRIMSON CHECK / COMMUNITY WALL</span>
+        <span>MADE TO BRING PEOPLE TOGETHER</span>
+      </footer>
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
 
-    <footer class="footer">
-      <span>CRIMSON CHECK / COMMUNITY WALL</span>
-      <span>MADE TO BRING PEOPLE TOGETHER</span>
-    </footer>
-  </main>
+      socket.on("connect", () => {
+        console.log("Socket Connected Successfully");
+      });
 
-  <script>
-    // YOUR ORIGINAL CHECKBOX-GENERATION JAVASCRIPT — UNCHANGED
-    const container = document.getElementById('checkbox-container')
-    const CHECKBOX_RANGE = 100
+      // YOUR ORIGINAL CHECKBOX-GENERATION JAVASCRIPT — UNCHANGED
+      const container = document.getElementById("checkbox-container");
+      const CHECKBOX_RANGE = 100;
 
-    new Array(CHECKBOX_RANGE).fill(null).forEach((_, index) => {
-        const input = document.createElement('input');
-        input.type = 'checkbox';
-        container.appendChild(input)
-    })
-  </script>
-</body>
+      socket.on("server:checkbox:clicked", (data) => {
+        const { index, checked } = data;
+        console.log(`Checkbox update received from server :`, {
+          index,
+          checked,
+        });
+
+        const input = document.getElementById(`checkbox-${index}`);
+        if (input) {
+          input.checked = checked;
+        }
+      });
+
+      window.addEventListener("load", async () => {
+        const response = await fetch("/checkboxes", { method: "GET" });
+        const data = await response.json();
+
+        console.log(data);
+
+        if (data && data.checkboxes) {
+          data.checkboxes.forEach((checked , index) => {
+            const input = document.createElement("input");
+
+            input.type = "checkbox";
+            input.id = `checkbox-${index}`;
+            input.checked = checked;
+
+            input.addEventListener("change", (event) => {
+              const checked = event.target.checked;
+              console.log(`Checkbox clicked :`, { index, checked });
+              socket.emit("client:checkbox:clicked", { index, checked });
+            });
+
+            container.appendChild(input);
+          });
+        }
+      });
+    </script>
+  </body>
 </html>
